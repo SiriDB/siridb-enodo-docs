@@ -24,6 +24,10 @@ There are just a few strict rules to take into account when deploying the enodo 
 
 ## Getting started
 
+### Docker
+**TODO**
+
+### Localhost
 Follow these steps for all the Enodo components:
 
 1. Install dependencies via `pip3 install -r requirements.txt`
@@ -121,3 +125,26 @@ event: `/api/event/output/create`
 
 #### Delete event output stream
 event: `/api/event/output/delete`
+
+
+## Analysis
+Enodo support the following analysis jobs:
+
+1. Base series analysis for series characteristics
+2. Forecasting
+3.  Anomaly detection
+4.  Statis rules
+
+Each analysis job is send by the Hub to a available worker. The worker uses the series config to determine which model/algorithm to use for executing the job. Different workers can have different models implemented, which they let the Hub know while connecting on startup.
+
+### 1. Base series analysis
+This job is meant to gather series characteristics and simple data such as if the series has a trend of detectable seasonality in it.
+
+### 2. Forecasting
+The forecasting job results in a forecast of the series. The worker will use a requested model to forecast the series into the future, using the data we already have of this series. The forecast can differ between models and config. You can forecast just 5 hours into the future, or 5 days and so one. Depending on the amount of data and the model used for this job, it can be a very extensive or simple forecast.
+
+### 3. Anomaly detection
+Using a requested model/algorithm the worker will try to check if in the last *n* points, there were any anomalies within the data. The more suffisticated the model or algorithm, the more precise the worker can be.
+
+### 4. Static rules
+For simple series, a static threshold will do. For now Enodo support a min and max threshold.

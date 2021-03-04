@@ -55,6 +55,12 @@
     <li class="toctree-l2"><a class="reference internal" href="#deployment">Deployment</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#docker">Docker</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#localhost">Localhost</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#enodo-hub-api">Enodo Hub API</a>
         <ul>
@@ -81,6 +87,18 @@
     <li class="toctree-l4"><a class="reference internal" href="#delete-event-output-stream">Delete event output stream</a>
     </li>
         </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#analysis">Analysis</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-base-series-analysis">1. Base series analysis</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-forecasting">2. Forecasting</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-anomaly-detection">3. Anomaly detection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-static-rules">4. Static rules</a>
     </li>
         </ul>
     </li>
@@ -134,6 +152,9 @@ Hub</p>
 <h2 id="deployment">Deployment</h2>
 <p>There are just a few strict rules to take into account when deploying the enodo platform. The Listener should be placed right next to you siridb instance, so it can listen to incoming data via a pipe. The worker can be deployed anywhere, as long as there is enough CPU resource to be used by the worker. The Hub should be deployed in such a way that it both the listener and the worker can connect to it via socket connections.</p>
 <h2 id="getting-started">Getting started</h2>
+<h3 id="docker">Docker</h3>
+<p><strong>TODO</strong></p>
+<h3 id="localhost">Localhost</h3>
 <p>Follow these steps for all the Enodo components:</p>
 <ol>
 <li>Install dependencies via <code>pip3 install -r requirements.txt</code></li>
@@ -227,6 +248,23 @@ Hub</p>
 <p>event: <code>/api/event/output/create</code></p>
 <h4 id="delete-event-output-stream">Delete event output stream</h4>
 <p>event: <code>/api/event/output/delete</code></p>
+<h2 id="analysis">Analysis</h2>
+<p>Enodo support the following analysis jobs:</p>
+<ol>
+<li>Base series analysis for series characteristics</li>
+<li>Forecasting</li>
+<li>Anomaly detection</li>
+<li>Statis rules</li>
+</ol>
+<p>Each analysis job is send by the Hub to a available worker. The worker uses the series config to determine which model/algorithm to use for executing the job. Different workers can have different models implemented, which they let the Hub know while connecting on startup.</p>
+<h3 id="1-base-series-analysis">1. Base series analysis</h3>
+<p>This job is meant to gather series characteristics and simple data such as if the series has a trend of detectable seasonality in it.</p>
+<h3 id="2-forecasting">2. Forecasting</h3>
+<p>The forecasting job results in a forecast of the series. The worker will use a requested model to forecast the series into the future, using the data we already have of this series. The forecast can differ between models and config. You can forecast just 5 hours into the future, or 5 days and so one. Depending on the amount of data and the model used for this job, it can be a very extensive or simple forecast.</p>
+<h3 id="3-anomaly-detection">3. Anomaly detection</h3>
+<p>Using a requested model/algorithm the worker will try to check if in the last <em>n</em> points, there were any anomalies within the data. The more suffisticated the model or algorithm, the more precise the worker can be.</p>
+<h3 id="4-static-rules">4. Static rules</h3>
+<p>For simple series, a static threshold will do. For now Enodo support a min and max threshold.</p>
               
             </div>
           </div>
@@ -271,5 +309,5 @@ Hub</p>
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-03-03 22:27:45.557774+00:00
+Build Date UTC : 2021-03-04 19:56:10.297717+00:00
 -->

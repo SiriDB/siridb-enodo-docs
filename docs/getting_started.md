@@ -44,40 +44,105 @@ The Enodo Hub has two API's from which you can do CRUD actions and subscribe to 
 call `{hostname}/api/series` (POST)
 ```
 {
-	"name": "series_name_in_siridb",
-	"config": {
-		"min_data_points":2,
-		"job_config":{
-			"job_base_analysis": {
-				"activated": true,
-				"model": "prophet",
-				"job_schedule": 200,
-				"model_params":{
-					"points_since":1563723900,
-					"sensitivity":2,
-					"static_rules":{
-					"min":800,
-					"max":1000,
-					"last_n_points":100
-					}
-				}
-			},
-			"job_forecast": {
-				"activated": true,
-				"model": "ffe",
-				"job_schedule": 200,
-				"model_params":{
-					"points_since":1563723900,
-					"sensitivity":2,
-					"static_rules":{
-					"min":800,
-					"max":1000,
-					"last_n_points":100
-					}
-				}
-			}
-		}
-	}
+  "name": "series_name_in_siridb",
+  "config": {
+    "min_data_points": 2,
+    "realtime": true,
+    "job_config": [
+      {
+        "activated": true,
+        "job_type": "job_base_analysis",
+        "model": "prophet",
+        "job_schedule_type": "points",
+        "job_schedule": 200,
+        "model_params": {
+          "points_since": 1563723900,
+          "sensitivity": 2,
+          "static_rules": {
+            "min": 800,
+            "max": 1000,
+            "last_n_points": 100
+          }
+        }
+      },
+      {
+        "link_name": "anomaly_forecast",
+        "activated": true,
+        "job_type": "job_forecast",
+        "model": "ffe",
+        "job_schedule_type": "seconds",
+        "job_schedule": 200,
+        "model_params": {
+          "points_since": 1563723900,
+          "sensitivity": 2,
+          "static_rules": {
+            "min": 800,
+            "max": 1000,
+            "last_n_points": 100
+          }
+        }
+      },
+      {
+        "link_name": "anomaly_forecast_test",
+        "activated": true,
+        "job_type": "job_forecast",
+        "model": "prophet",
+        "job_schedule_type": "seconds",
+        "job_schedule": 200,
+        "model_params": {
+          "points_since": 1563723900,
+          "sensitivity": 2,
+          "static_rules": {
+            "min": 800,
+            "max": 1000,
+            "last_n_points": 100
+          }
+        }
+      },
+      {
+        "requires_job": "anomaly_forecast",
+        "activated": true,
+        "job_type": "job_anomaly_detect",
+        "model": "ffe",
+        "job_schedule_type": "seconds",
+        "job_schedule": 200,
+        "model_params": {
+          "points_since": 1563723900,
+          "sensitivity": 2,
+          "forecast_name": "anomaly_forecast"
+        }
+      },
+      {
+        "requires_job": "anomaly_forecast_test",
+        "activated": true,
+        "job_type": "job_anomaly_detect",
+        "silenced": true,
+        "model": "ffe",
+        "job_schedule_type": "seconds",
+        "job_schedule": 200,
+        "model_params": {
+          "points_since": 1563723900,
+          "sensitivity": 2,
+          "forecast_name": "anomaly_forecast_test"
+        }
+      },
+      {
+        "requires_job": "anomaly_forecast",
+        "activated": true,
+        "job_type": "job_static_rules",
+        "model": "static_rule_engine",
+        "job_schedule_type": "seconds",
+        "job_schedule": 200,
+        "model_params": {
+          "min": 800,
+          "max": 1000,
+          "last_n_points": 100,
+          "n_predict": 100,
+          "on_forecast": "anomaly_forecast"
+        }
+      }
+    ]
+  }
 }
 ```
 

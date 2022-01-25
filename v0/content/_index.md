@@ -1,8 +1,13 @@
+---
+weight: 0
+---
+
 # Welcome to the SiriDB Enodo docs
 
-For sourcecode please visit the [SiriDB Enodo Hub repo](https://github.com/SiriDB/siridb-enodo-hub).
+For source code please visit the [SiriDB Enodo Hub repo](https://github.com/SiriDB/siridb-enodo-hub).
 
 ## About SiriDB Enodo
+
 Enodo is a time series data analysis platform made for SiriDB. Combining the power of storing and querying time series data from SiriDB and the analyzing power of Enodo, we can create better understanding of the data that we collect and store. So we can learn from the past and create forecasts for the future.
 
 The Enodo platform is build in modules to create scalability. The Hub will control and organize the data that we have collected and the questions we want to ask about the data. The Worker will perform the analyzing jobs and the Listener will stay on top of the latest data points. Together these components will make sure we can monitor the data in realtime, adjust our expectations for the future and watch for sudden unexpected changes in the data that we collect.

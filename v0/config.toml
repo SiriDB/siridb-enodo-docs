@@ -1,0 +1,29 @@
+baseURL = "https://docs.siridb-enodo.com/v0/"
+languageCode = "en-us"
+title = "Enodo documentation"
+publishDir = "../docs/v0"
+
+# Change the default theme to be use when building the site with Hugo
+theme = "hugo-theme-learn"
+
+# For search functionality
+[outputs]
+  home = [ "HTML", "RSS", "JSON"]
+
+[params]
+  # Change default color scheme with a variant one. Can be "red", "blue", "green".
+  themeVariant = "mine"
+  # Description of the site, will be used in meta information
+  description = "Enodo documentation"
+  disableInlineCopyToClipBoard = true
+
+[[menu.shortcuts]]
+name = "<i class='far fa-window-maximize'></i> Website"
+url = "https://siridb.net/enodo"
+weight = 10
+
+[[menu.shortcuts]]
+name = "<i class='fab fa-github'></i> Github repo"
+identifier = "ds"
+url = "https://github.com/SiriDB/siridb-enodo-hub"
+weight = 20

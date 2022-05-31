@@ -23,8 +23,6 @@ jobs:
         run: |
           cd v0
           hugo --minify
-          cd ../v1
-          hugo --minify
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

@@ -1,0 +1,312 @@
+<!doctype html><html lang=en class="js csstransforms3d">
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=generator content="Hugo 0.90.0">
+<meta name=description content="Enodo documentation">
+<link rel="shortcut icon" href=/v0/images/favicon.ico type=image/x-icon>
+<title>Getting started :: Enodo documentation</title>
+<link href=/v0/css/nucleus.css?1654004934 rel=stylesheet>
+<link href=/v0/css/fontawesome-all.min.css?1654004934 rel=stylesheet>
+<link href=/v0/css/hybrid.css?1654004934 rel=stylesheet>
+<link href=/v0/css/featherlight.min.css?1654004934 rel=stylesheet>
+<link href=/v0/css/perfect-scrollbar.min.css?1654004934 rel=stylesheet>
+<link href=/v0/css/auto-complete.css?1654004934 rel=stylesheet>
+<link href=/v0/css/atom-one-dark-reasonable.css?1654004934 rel=stylesheet>
+<link href=/v0/css/theme.css?1654004934 rel=stylesheet>
+<link href=/v0/css/hugo-theme.css?1654004934 rel=stylesheet>
+<link href=/v0/css/theme-mine.css?1654004934 rel=stylesheet>
+<script src=/v0/js/jquery-3.3.1.min.js?1654004934></script>
+<style>:root #header+#content>#left>#rlblock_left{display:none!important}:not(pre)>code+span.copy-to-clipboard{display:none}</style>
+</head>
+<body data-url=/v0/getting_started/>
+<nav id=sidebar>
+<div id=header-wrapper>
+<div id=header>
+<a href=/>
+<img src=/v0/images/logo.png alt=Logo>
+</a>
+</div>
+<div class=searchbox>
+<label for=search-by><i class="fas fa-search"></i></label>
+<input data-search-input id=search-by type=search placeholder=Search...>
+<span data-search-clear><i class="fas fa-times"></i></span>
+</div>
+<script type=text/javascript src=/v0/js/lunr.min.js?1654004934></script>
+<script type=text/javascript src=/v0/js/auto-complete.js?1654004934></script>
+<script type=text/javascript>var baseurl="https://docs.siridb-enodo.com/v0/"</script>
+<script type=text/javascript src=/v0/js/search.js?1654004934></script>
+</div>
+<div class=highlightable>
+<ul class=topics>
+<li data-nav-id=/v0/getting_started/ title="Getting started" class="dd-item
+parent
+active">
+<a href=/v0/getting_started/>
+Getting started
+</a>
+</li>
+</ul>
+<section id=shortcuts>
+<h3>More</h3>
+<ul>
+<li>
+<a class=padding href=https://siridb.net/enodo><i class="far fa-window-maximize"></i> Website</a>
+</li>
+<li>
+<a class=padding href=https://github.com/SiriDB/siridb-enodo-hub><i class="fab fa-github"></i> Github repo</a>
+</li>
+</ul>
+</section>
+<section id=footer>
+<p>Built with <a href=https://github.com/matcornic/hugo-theme-learn><i class="fas fa-heart"></i></a> from <a href=https://getgrav.org>Grav</a> and <a href=https://gohugo.io/>Hugo</a></p>
+</section>
+</div>
+</nav>
+<section id=body>
+<div id=overlay></div>
+<div class="padding highlightable">
+<div>
+<div id=top-bar>
+<div id=breadcrumbs>
+<span id=sidebar-toggle-span>
+<a href=# id=sidebar-toggle data-sidebar-toggle>
+<i class="fas fa-bars"></i>
+</a>
+</span>
+<span id=toc-menu><i class="fas fa-list-alt"></i></span>
+<ol class=links itemscope itemtype=http://schema.org/BreadcrumbList>
+<meta itemprop=itemListOrder content="Descending">
+<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement>
+<meta itemprop=position content="2">
+<a itemprop=item href=/v0/>
+<span itemprop=name></span>
+</a>
+</li>
+>
+<li itemscope itemtype=https://schema.org/ListItem itemprop=itemListElement>
+<meta itemprop=position content="1">
+<a itemprop=item href=/v0/getting_started/ aria-disabled=true>
+<span itemprop=name>Getting started</span>
+</a>
+</li>
+</ol>
+</div>
+<div class=progress>
+<div class=wrapper>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#deployment>Deployment</a>
+<ul>
+<li><a href=#docker>Docker</a></li>
+<li><a href=#localhost>Localhost</a></li>
+</ul>
+</li>
+<li><a href=#enodo-hub-api>Enodo Hub API</a>
+<ul>
+<li><a href=#rest-api>REST API</a></li>
+<li><a href=#socketio-api-websockets>Socket.IO Api (WebSockets)</a></li>
+</ul>
+</li>
+<li><a href=#analysis>Analysis</a>
+<ul>
+<li><a href=#1-base-series-analysis>1. Base series analysis</a></li>
+<li><a href=#2-forecasting>2. Forecasting</a></li>
+<li><a href=#3-anomaly-detection>3. Anomaly detection</a></li>
+<li><a href=#4-static-rules>4. Static rules</a></li>
+<li><a href=#analysis-models>Analysis models</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<div id=head-tags>
+</div>
+<div id=body-inner>
+<h1>
+Getting started
+</h1>
+<h2 id=deployment>Deployment</h2>
+<p>There are just a few strict rules to take into account when deploying the enodo platform. The Listener should be placed right next to you siridb instance, so it can listen to incoming data via a pipe. The worker can be deployed anywhere, as long as there is enough CPU resource to be used by the worker. The Hub should be deployed in such a way that it both the listener and the worker can connect to it via socket connections.</p>
+<h3 id=docker>Docker</h3>
+<p><strong>TODO</strong></p>
+<h3 id=localhost>Localhost</h3>
+<p>Follow these steps for all the Enodo components:</p>
+<ol>
+<li>Install dependencies via <code>pip3 install -r requirements.txt</code></li>
+<li>Setup a .conf file file <code>python3 main.py --create_config</code> There will be made a <code>default.conf</code> next to the main.py.</li>
+<li>Fill in the <code>default.conf</code> file</li>
+<li>Call <code>python3 main.py --config=default.conf</code> to start the hub.</li>
+<li>You can also setup the config by environment variables. These names are identical to those in the default.conf file, except all uppercase.</li>
+</ol>
+<p>Follow these additional steps for the Enodo Hub:</p>
+<ol start=6>
+<li>Fill in <code>settings.enodo</code> file, which you can find in the data folder by the path set in the conf file with key: <code>enodo_base_save_path</code></li>
+<li>Restart Hub to use new settings or fill them in via the GUI</li>
+</ol>
+<h2 id=enodo-hub-api>Enodo Hub API</h2>
+<p>The Enodo Hub has two API&rsquo;s from which you can do CRUD actions and subscribe to data changes. A REST API and a socket.io API.</p>
+<h3 id=rest-api>REST API</h3>
+<table>
+<thead>
+<tr>
+<th>Resource path</th>
+<th style=text-align:center>CRUD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/api/series</td>
+<td style=text-align:center>CR</td>
+</tr>
+<tr>
+<td>/api/series/{series_name}</td>
+<td style=text-align:center>RD</td>
+</tr>
+<tr>
+<td>/api/enodo/event/output</td>
+<td style=text-align:center>CR</td>
+</tr>
+<tr>
+<td>api/enodo/event/output/{output_id}</td>
+<td style=text-align:center>D</td>
+</tr>
+</tbody>
+</table>
+<h4 id=examples>Examples</h4>
+<p><strong>Create Series</strong></p>
+<p>call <code>{hostname}/api/series</code> (POST)</p>
+<pre tabindex=0><code>{
+	&quot;name&quot;: &quot;series_name_in_siridb&quot;,
+	&quot;config&quot;: {
+		&quot;min_data_points&quot;:2,
+		&quot;job_config&quot;:{
+			&quot;job_base_analysis&quot;: {
+				&quot;activated&quot;: true,
+				&quot;model&quot;: &quot;prophet&quot;,
+				&quot;job_schedule&quot;: 200,
+				&quot;model_params&quot;:{
+					&quot;points_since&quot;:1563723900,
+					&quot;sensitivity&quot;:2,
+					&quot;static_rules&quot;:{
+					&quot;min&quot;:800,
+					&quot;max&quot;:1000,
+					&quot;last_n_points&quot;:100
+					}
+				}
+			},
+			&quot;job_forecast&quot;: {
+				&quot;activated&quot;: true,
+				&quot;model&quot;: &quot;ffe&quot;,
+				&quot;job_schedule&quot;: 200,
+				&quot;model_params&quot;:{
+					&quot;points_since&quot;:1563723900,
+					&quot;sensitivity&quot;:2,
+					&quot;static_rules&quot;:{
+					&quot;min&quot;:800,
+					&quot;max&quot;:1000,
+					&quot;last_n_points&quot;:100
+					}
+				}
+			}
+		}
+	}
+}
+</code></pre><p><strong>Create event output stream</strong></p>
+<p>call <code>{hostname}/api/enodo/event/output</code> (POST)</p>
+<pre tabindex=0><code>{
+	&quot;output_type&quot;: 1,
+	&quot;data&quot;: {
+		&quot;for_severities&quot;: [&quot;warning&quot;, &quot;error&quot;],
+		&quot;url&quot;: &quot;url_to_endpoint&quot;,
+		&quot;headers&quot;: {
+			&quot;authorization&quot;: &quot;Basic abcdefghijklmnopqrstuvwxyz&quot;
+		},
+		&quot;payload&quot;: &quot;{\n  \&quot;title\&quot;: \&quot;{{event.title}}\&quot;,\n  \&quot;body\&quot;: \&quot;{{event.message}}\&quot;,\n  \&quot;dateTime\&quot;: {{event.ts}},\n  \&quot;severity\&quot;: \&quot;{{event.severity}}\&quot;\n}&quot;
+	}
+}
+</code></pre><h3 id=socketio-api-websockets>Socket.IO Api (WebSockets)</h3>
+<p>When sending payload in a request, use the data structure same as in the REST API calls, except the data will be wrapped in an object : <code>{"data": ...}</code>.</p>
+<h4 id=get-series>Get series</h4>
+<p>event: <code>/api/series/create</code></p>
+<h4 id=get-series-details>Get series Details</h4>
+<p>event: <code>/api/series/details</code></p>
+<h4 id=create-series>Create series</h4>
+<p>event: <code>/api/series/create</code></p>
+<h4 id=delete-series>Delete series</h4>
+<p>event: <code>/api/series/delete</code></p>
+<h4 id=get-all-event-output-stream>Get all event output stream</h4>
+<p>event: <code>/api/event/output</code></p>
+<h4 id=create-event-output-stream>Create event output stream</h4>
+<p>event: <code>/api/event/output/create</code></p>
+<h4 id=delete-event-output-stream>Delete event output stream</h4>
+<p>event: <code>/api/event/output/delete</code></p>
+<h2 id=analysis>Analysis</h2>
+<p>Enodo support the following analysis jobs:</p>
+<ol>
+<li>Base series analysis for series characteristics</li>
+<li>Forecasting</li>
+<li>Anomaly detection</li>
+<li>Statis rules</li>
+</ol>
+<p>Each analysis job is send by the Hub to a available worker. The worker uses the series config to determine which model/algorithm to use for executing the job. Different workers can have different models implemented, which they let the Hub know while connecting on startup.</p>
+<h3 id=1-base-series-analysis>1. Base series analysis</h3>
+<p>This job is meant to gather series characteristics and simple data such as if the series has a trend of detectable seasonality in it.</p>
+<h3 id=2-forecasting>2. Forecasting</h3>
+<p>The forecasting job results in a forecast of the series. The worker will use a requested model to forecast the series into the future, using the data we already have of this series. The forecast can differ between models and config. You can forecast just 5 hours into the future, or 5 days and so one. Depending on the amount of data and the model used for this job, it can be a very extensive or simple forecast.</p>
+<h3 id=3-anomaly-detection>3. Anomaly detection</h3>
+<p>Using a requested model/algorithm the worker will try to check if in the last <em>n</em> points, there were any anomalies within the data. The more suffisticated the model or algorithm, the more precise the worker can be.</p>
+<h3 id=4-static-rules>4. Static rules</h3>
+<p>For simple series, a static threshold will do. For now Enodo support a min and max threshold.</p>
+<h3 id=analysis-models>Analysis models</h3>
+<p>Models can be installed within the worker</p>
+<pre tabindex=0><code>analyser
+├── model
+    ├── __init__.py
+    ├── models
+    │   ├── base.py
+    │   ├── ffe
+    │   │   ├── __init__.py
+    │   │   ├── bootstrap.py
+    │   │   └── ffe.py
+    │   └── prophet
+    │       ├── __init__.py
+    │       ├── bootstrap.py
+    │       └── prophet.py
+    └── util.py
+</code></pre><p>Within the model folder you will find:</p>
+<ul>
+<li>util.py holding the load function, to load all model classes</li>
+<li>models folder holding all installed analyser models</li>
+</ul>
+<p>When creating a new model, make sure that the modelclass itself extends the basemodel class in base.py, and that the bootstrap.py file will have a function <code>get_model_class</code> which will return the model class itself (not an instance)</p>
+<footer class=footline>
+</footer>
+</div>
+</div>
+<div id=navigation>
+<a class="nav nav-prev" href=/v0/categories/ title=Categories> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-next" href=/v0/tags/ title=Tags style=margin-right:0><i class="fa fa-chevron-right"></i></a>
+</div>
+</section>
+<div style=left:-1000px;overflow:scroll;position:absolute;top:-1000px;border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px>
+<div style=border:none;box-sizing:content-box;height:200px;margin:0;padding:0;width:200px></div>
+</div>
+<script src=/v0/js/clipboard.min.js?1654004934></script>
+<script src=/v0/js/perfect-scrollbar.min.js?1654004934></script>
+<script src=/v0/js/perfect-scrollbar.jquery.min.js?1654004934></script>
+<script src=/v0/js/jquery.sticky.js?1654004934></script>
+<script src=/v0/js/featherlight.min.js?1654004934></script>
+<script src=/v0/js/highlight.pack.js?1654004934></script>
+<script>hljs.initHighlightingOnLoad()</script>
+<script src=/v0/js/modernizr.custom-3.6.0.js?1654004934></script>
+<script src=/v0/js/learn.js?1654004934></script>
+<script src=/v0/js/hugo-learn.js?1654004934></script>
+<link href=/v0/mermaid/mermaid.css?1654004934 rel=stylesheet>
+<script src=/v0/mermaid/mermaid.js?1654004934></script>
+<script>mermaid.initialize({startOnLoad:!0})</script>
+</body>
+</html>

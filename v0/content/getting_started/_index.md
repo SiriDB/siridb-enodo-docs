@@ -2,251 +2,170 @@
 title: "Getting started"
 ---
 
-## Deployment
 
-There are just a few strict rules to take into account when deploying the enodo platform. The Listener should be placed right next to you siridb instance, so it can listen to incoming data via a pipe. The worker can be deployed anywhere, as long as there is enough CPU resource to be used by the worker. The Hub should be deployed in such a way that it both the listener and the worker can connect to it via socket connections.
+## Worker pools
+The hub divides workers into pools. Within a pool, workers are also divided by their `job_type_id`. So when running a job, the hub needs to know in which pool and for which job type. For each combination of `pool_id` and `job_type_id` a lookup/scaling table is generated based on the number of workers available for that combination.
 
-### Docker
+## Enodo internal vocabulary
+- `pool_id`: the index of a pool (0,1,2....)
+- `job_type_id`: the id that corresponds with a job type (forecast, anomaly detection..)
+- `pool_idx`: the bitshifted combination between pool_id and job_type_id (see `gen_pool_idx` func in hub)
+- `worker_id`: the index of a worker within a pool/job_type combo
+- `worker_idx`: the bitshifted combination between pool_id, job_type_id and worker_id. (see `gen_worker_idx` func in hub) Makes it easy to use one int value for a quick lookup of a certain worker. Also you are able to determine the pool_id and job_type_id from this idx
 
-**TODO**
+# REST API
 
-### Localhost
+Auth is basic auth. Default username and password are `enodo`
 
-Follow these steps for all the Enodo components:
+## Run job for series
+You can request enodo to run a job. You can give an output id (`responseOutputID`) which will be used to send the result to
 
-1. Install dependencies via `pip3 install -r requirements.txt`
-2. Setup a .conf file file `python3 main.py --create_config` There will be made a `default.conf` next to the main.py.
-3. Fill in the `default.conf` file
-4. Call `python3 main.py --config=default.conf` to start the hub.
-5. You can also setup the config by environment variables. These names are identical to those in the default.conf file, except all uppercase.
-
-Follow these additional steps for the Enodo Hub:
-
-6. Fill in `settings.enodo` file, which you can find in the data folder by the path set in the conf file with key: `enodo_base_save_path`
-7. Restart Hub to use new settings or fill them in via the GUI
-
-## Enodo Hub API
-
-The Enodo Hub has two API's from which you can do CRUD actions and subscribe to data changes. A REST API and a socket.io API.
-
-### REST API
-
-| Resource path | CRUD          |
-| ------------- |:-------------:|
-| /api/series      | CR |
-| /api/series/{series_name}      | RD      |
-| /api/enodo/event/output | CR      |
-| api/enodo/event/output/{output_id} | D |
-
-#### Examples
-
-**Create Series**
-
-call `{hostname}/api/series` (POST)
 ```
-{
-  "name": "series_name_in_siridb",
-  "config": {
-    "min_data_points": 2,
-    "realtime": true,
-    "job_config": [
-      {
-        "activated": true,
-        "job_type": "job_base_analysis",
-        "model": "prophet",
-        "job_schedule_type": "points",
-        "job_schedule": 200,
-        "model_params": {
-          "points_since": 1563723900,
-          "sensitivity": 2,
-          "static_rules": {
-            "min": 800,
-            "max": 1000,
-            "last_n_points": 100
-          }
-        }
-      },
-      {
-        "link_name": "anomaly_forecast",
-        "activated": true,
-        "job_type": "job_forecast",
-        "model": "ffe",
-        "job_schedule_type": "seconds",
-        "job_schedule": 200,
-        "model_params": {
-          "points_since": 1563723900,
-          "sensitivity": 2,
-          "static_rules": {
-            "min": 800,
-            "max": 1000,
-            "last_n_points": 100
-          }
-        }
-      },
-      {
-        "link_name": "anomaly_forecast_test",
-        "activated": true,
-        "job_type": "job_forecast",
-        "model": "prophet",
-        "job_schedule_type": "seconds",
-        "job_schedule": 200,
-        "model_params": {
-          "points_since": 1563723900,
-          "sensitivity": 2,
-          "static_rules": {
-            "min": 800,
-            "max": 1000,
-            "last_n_points": 100
-          }
-        }
-      },
-      {
-        "requires_job": "anomaly_forecast",
-        "activated": true,
-        "job_type": "job_anomaly_detect",
-        "model": "ffe",
-        "job_schedule_type": "seconds",
-        "job_schedule": 200,
-        "model_params": {
-          "points_since": 1563723900,
-          "sensitivity": 2,
-          "forecast_name": "anomaly_forecast"
-        }
-      },
-      {
-        "requires_job": "anomaly_forecast_test",
-        "activated": true,
-        "job_type": "job_anomaly_detect",
-        "silenced": true,
-        "model": "ffe",
-        "job_schedule_type": "seconds",
-        "job_schedule": 200,
-        "model_params": {
-          "points_since": 1563723900,
-          "sensitivity": 2,
-          "forecast_name": "anomaly_forecast_test"
-        }
-      },
-      {
-        "requires_job": "anomaly_forecast",
-        "activated": true,
-        "job_type": "job_static_rules",
-        "model": "static_rule_engine",
-        "job_schedule_type": "seconds",
-        "job_schedule": 200,
-        "model_params": {
-          "min": 800,
-          "max": 1000,
-          "last_n_points": 100,
-          "n_predict": 100,
-          "on_forecast": "anomaly_forecast"
-        }
-      }
-    ]
-  }
-}
-```
-
-**Create event output stream**
-
-call `{hostname}/api/enodo/event/output` (POST)
-```
-{
-	"output_type": 1,
-	"data": {
-		"for_severities": ["warning", "error"],
-		"url": "url_to_endpoint",
-		"headers": {
-			"authorization": "Basic abcdefghijklmnopqrstuvwxyz"
-		},
-		"payload": "{\n  \"title\": \"{{event.title}}\",\n  \"body\": \"{{event.message}}\",\n  \"dateTime\": {{event.ts}},\n  \"severity\": \"{{event.severity}}\"\n}"
+curl --request POST \
+  --url 'http://localhost/api/series/forecast_test2/run?byName=1&poolID=0&responseOutputID=1017' \
+  --header 'Authorization: Basic qweqweqw=' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"meta": {
+		"assetID": "1234abcd"
+	},
+	"config": {
+		"config_name": "forecast",
+		"job_type_id": 1,
+		"module": "prophet@0.2.0-beta0.1.2",
+		"max_n_points": 20000,
+		"module_params": {
+			"periods": 200,
+			"smooth": true,
+			"forecast_freq": "30T",
+			"changepoint_range": 0.95,
+			"uncertainty_samples": 1000
+		}
 	}
-}
+}'
 ```
 
-### Socket.IO Api (WebSockets)
+- `job_type_id` is the job type, `1` equals a forecast job.
+- `max_n_points` is the amount of historic points we will use to create our model
 
-When sending payload in a request, use the data structure same as in the REST API calls, except the data will be wrapped in an object : `{"data": ...}`.
+In model params:
 
-#### Get series
+- `periods` is the amount of periods the forecast needs to be. So the range of the forecast will be `periods * forecast_freq`
+- `smooth` determines if we apply smoothing to our historic data. When applied, we will reduce the time needed to fit our model
+- `changepoint_range` will determin how much of our historic data is used to determine changepoints. When we have a small dataset, it is important that this value is as high as possible (range: 0.0 - 1.0)
+- `uncertainty_samples` Will determine the precision of our `yhat_lower` and `yhat_upper` (0 - 1000) the more closer to 1000 the more accurate it will be, but this adds a bit of extra time to our fitting)
 
-event: `/api/series/create`
 
-#### Get series Details
-
-event: `/api/series/details`
-
-#### Create series
-
-event: `/api/series/create`
-
-#### Delete series
-
-event: `/api/series/delete`
-
-#### Get all event output stream
-
-event: `/api/event/output`
-
-#### Create event output stream
-
-event: `/api/event/output/create`
-
-#### Delete event output stream
-
-event: `/api/event/output/delete`
-
-## Analysis
-
-Enodo support the following analysis jobs:
-
-1. Base series analysis for series characteristics
-2. Forecasting
-3. Anomaly detection
-4. Statis rules
-
-Each analysis job is send by the Hub to a available worker. The worker uses the series config to determine which model/algorithm to use for executing the job. Different workers can have different models implemented, which they let the Hub know while connecting on startup.
-
-### 1. Base series analysis
-
-This job is meant to gather series characteristics and simple data such as if the series has a trend of detectable seasonality in it.
-
-### 2. Forecasting
-
-The forecasting job results in a forecast of the series. The worker will use a requested model to forecast the series into the future, using the data we already have of this series. The forecast can differ between models and config. You can forecast just 5 hours into the future, or 5 days and so one. Depending on the amount of data and the model used for this job, it can be a very extensive or simple forecast.
-
-### 3. Anomaly detection
-
-Using a requested model/algorithm the worker will try to check if in the last *n* points, there were any anomalies within the data. The more suffisticated the model or algorithm, the more precise the worker can be.
-
-### 4. Static rules
-
-For simple series, a static threshold will do. For now Enodo support a min and max threshold.
-
-### Analysis models
-
-Models can be installed within the worker
+## Get Outputs for events
+Get active outputs for events
 
 ```
-analyser
-├── model
-    ├── __init__.py
-    ├── models
-    │   ├── base.py
-    │   ├── ffe
-    │   │   ├── __init__.py
-    │   │   ├── bootstrap.py
-    │   │   └── ffe.py
-    │   └── prophet
-    │       ├── __init__.py
-    │       ├── bootstrap.py
-    │       └── prophet.py
-    └── util.py
+curl --request GET \
+  --url http://localhost/api/enodo/output/event \
+  --header 'Authorization: Basic qweqweqw='
 ```
 
-Within the model folder you will find:
+## Get outputs for results
+Get active output for results
 
-- util.py holding the load function, to load all model classes
-- models folder holding all installed analyser models
+```
+curl --request GET \
+  --url http://localhost/api/enodo/output/result \
+  --header 'Authorization: Basic qweqweqw='
+```
 
-When creating a new model, make sure that the modelclass itself extends the basemodel class in base.py, and that the bootstrap.py file will have a function `get_model_class` which will return the model class itself (not an instance)
+## Delete an output
+Delete an output by its type (event or result) and id
+
+```
+curl --request DELETE \
+  --url http://localhost/api/enodo/output/{type}/{id} \
+  --header 'Authorization: Basic qweqweqw='
+```
+
+## Add output
+Add an event or result output
+
+```
+curl --request POST \
+  --url http://localhost/api/enodo/output/result \
+  --header 'Authorization: Basic qweqweqw=' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"url": "http://hub:8720/enodo",
+	"params": {
+		"assetId": "${request.meta.assetId}"
+	},
+	"headers": {
+		"Authorization": "Basic 2312",
+		"Content-Type": "application/json"
+	},
+	"payload": "{${?response.error,error}${?response.meta.accuracy,accuracy}\"forecast\": ${response.result},\"name\": \"${response.series_name}\"}"
+}'
+```
+
+The params and payload fields can have string templating syntax in them, but also added extra's such as `?` for optionals and `{original_path, new_property_name}`
+
+## Get worker stats
+Get stats about workers in a pool
+
+```
+curl --request GET \
+  --url http://localhost/api/worker/stats/{pool_id} \
+  --header 'Authorization: Basic qweqweqw='
+```
+
+## Get worker state for a series
+Query the responsible worker for the current state the worker has for a specified series
+
+```
+curl --request GET \
+  --url http://localhost/api/series/{series_name}/state/{pool_id}/{job_type_id} \
+  --header 'Authorization: Basic qweqweqw='
+```
+
+
+## Get workers
+Get works the hub knowns
+
+```
+curl --request GET \
+  --url http://localhost/api/worker/{pool_id} \
+  --header 'Authorization: Basic qweqweqw='
+```
+
+## Delete worker
+Delete a worker. The hub will always delete the latest worker in the given pool/job_type combo.
+
+```
+curl --request DELETE \
+  --url http://localhost/api/worker/{pool_id}/{job_type_id} \
+  --header 'Authorization: Basic qweqweqw=' \
+```
+
+## Add worker
+Add a worker to a given `pool_id` for a given `job_type_id`
+
+```
+curl --request POST \
+  --url http://localhost/api/worker/{pool_id} \
+  --header 'Authorization: Basic qweqweqw=' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"hostname": "localhost",
+	"port": 9105,
+	"worker_config": {
+		"job_type_id": 1,
+		"config": {}
+	}
+}'
+```
+
+## Get hub status
+Get hub version
+
+```
+curl --request GET \
+  --url http://localhost:8081/api/enodo/status \
+  --header 'Authorization: Basic qweqweqw='
+```
